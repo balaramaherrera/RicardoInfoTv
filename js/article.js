@@ -9,9 +9,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   let article = id ? getCachedArticle(id) : null;
 
   // Si alguien entra directo al link sin pasar por el home, no hay caché:
-  // cargamos noticias de portada y tomamos la primera como respaldo.
+  // cargamos noticias y tomamos la primera como respaldo.
   if (!article) {
-    const fallback = await fetchNews("portada");
+    const fallback = await fetchAllNews();
     cacheArticles(fallback);
     article = fallback[0];
   }
@@ -24,7 +24,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   renderArticle(article);
   loadRelated(article);
+  setupReadProgress();
 });
+
+function setupReadProgress() {
+  const bar = document.getElementById("read-progress");
+  if (!bar) return;
+  const onScroll = () => {
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = scrollable > 0 ? (window.scrollY / scrollable) * 100 : 0;
+    bar.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+  };
+  document.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+}
 
 function renderArticle(a) {
   document.title = `${a.title} — Riesdorinfoty`;
@@ -48,8 +61,7 @@ function renderArticle(a) {
 async function loadRelated(current) {
   const grid = document.getElementById("related-grid");
   try {
-    const items = await fetchNews(current.category === "bono_banca" ? "bono_banca" : "analisis");
-    cacheArticles(items);
+    const items = await fetchAllNews();
     const others = items.filter(i => i.id !== current.id).slice(0, 3);
     grid.innerHTML = others.map(renderCard).join("");
     attachCardHandlers(grid);
@@ -59,12 +71,7 @@ async function loadRelated(current) {
 }
 
 function sectionLabel(cat) {
-  const labels = {
-    analisis: "Análisis y opinión",
-    bono_banca: "Bono y banca",
-    portada: "Geopolítica"
-  };
-  return labels[cat] || "Geopolítica";
+  return "Geopolítica";
 }
 
 function formatDate(iso) {

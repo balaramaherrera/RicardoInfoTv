@@ -2,6 +2,39 @@
    Funciones compartidas: tarjetas, escape de HTML, navegación
    ========================================================= */
 
+// Deja ver la página con un fundido suave al cargar (evita el "flash" en blanco)
+window.addEventListener("DOMContentLoaded", () => {
+  requestAnimationFrame(() => document.body.classList.add("is-ready"));
+  setupCompactHeader();
+});
+
+function setupCompactHeader() {
+  const header = document.querySelector(".site-header");
+  if (!header) return;
+  const onScroll = () => {
+    header.classList.toggle("is-compact", window.scrollY > 40);
+  };
+  document.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+}
+
+// Aplica la misma transición de desvanecido a links normales (logo, "Inicio", etc.)
+// que apuntan a otra página del sitio, sin tocar los enlaces de solo #ancla.
+document.addEventListener("click", (e) => {
+  const link = e.target.closest("a[href]");
+  if (!link) return;
+
+  const href = link.getAttribute("href");
+  if (!href || href.startsWith("#") || href.startsWith("http") || href.startsWith("mailto:") || href.startsWith("tel:") || link.target === "_blank") return;
+  if (!href.endsWith(".html") && !href.includes(".html#")) return;
+
+  if (link.classList.contains("no-transition")) return;
+
+  e.preventDefault();
+  document.body.classList.add("is-leaving");
+  setTimeout(() => { window.location.href = href; }, 180);
+});
+
 function renderCard(item) {
   return `
     <article class="card" data-id="${item.id}">
@@ -20,8 +53,12 @@ function attachCardHandlers(container) {
   });
 }
 
+// Transición suave: se desvanece la página actual antes de navegar
 function goToArticle(id) {
-  window.location.href = `articulo.html?id=${encodeURIComponent(id)}`;
+  document.body.classList.add("is-leaving");
+  setTimeout(() => {
+    window.location.href = `articulo.html?id=${encodeURIComponent(id)}`;
+  }, 180);
 }
 
 function escapeHtml(str) {

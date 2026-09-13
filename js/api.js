@@ -48,7 +48,7 @@ const MOCK_ARTICLES = [
   },
   {
     id: "m5",
-    title: "Aumentos considerables en el sector",
+    title: "China Incrementa IA en la banca",
     description: "Trabajadores públicos recibirán un ajuste salarial en las próximas semanas.",
     content: "Trabajadores públicos recibirán un ajuste salarial en las próximas semanas, según fuentes del ministerio.",
     image: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?q=80&w=1200&auto=format&fit=crop",
@@ -58,12 +58,12 @@ const MOCK_ARTICLES = [
   },
   {
     id: "m6",
-    title: "Planificación de bonos para 2027",
+    title: "Asi funciona el calendario de pagos del próximo año fiscal",
     description: "El gobierno adelanta lineamientos generales sobre el calendario de pagos.",
     content: "El gobierno adelanta lineamientos generales sobre el calendario de pagos del próximo año fiscal.",
     image: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=1200&auto=format&fit=crop",
     source: "AP",
-    category: "bono_banca",
+    category: "Informacion Bancaria",
     publishedAt: "2026-09-05"
   }
 ];
