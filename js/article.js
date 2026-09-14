@@ -48,11 +48,20 @@ function renderArticle(a) {
   document.getElementById("art-source").textContent = a.source || "";
   document.getElementById("art-date").textContent = formatDate(a.publishedAt);
 
+  const sourceLink = document.getElementById("art-source-link");
+  if (sourceLink && a.url) {
+    sourceLink.href = a.url;
+    sourceLink.hidden = false;
+  }
+
   const media = document.getElementById("art-media");
   media.innerHTML = `<img src="${a.image}" alt="${escapeHtml(a.title)}">`;
 
   const body = document.getElementById("art-body");
-  const paragraphs = (a.content || a.description || "")
+  const content = a.content && !/\.\.\.\s*\[\d+\s*chars?\]/i.test(a.content)
+    ? a.content
+    : a.description;
+  const paragraphs = (content || "")
     .split("\n")
     .filter(p => p.trim().length);
   body.innerHTML = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join("");

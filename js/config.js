@@ -10,14 +10,14 @@
 
 const CONFIG = {
   // Pega tu API key de GNews.io aquí (deja vacío para usar datos de ejemplo)
-  GNEWS_API_KEY: "",
+  GNEWS_API_KEY: "921789ac54a3945c8e6e4546b0e6c312",
 
   // Endpoint base de GNews
   GNEWS_BASE_URL: "https://gnews.io/api/v4/search",
 
   // Idioma y país de las noticias
   LANG: "es",
-  COUNTRY: "us",
+  COUNTRY: "ve",
 
   // Términos de búsqueda por sección de tu sitio
   SECTIONS: {
@@ -32,5 +32,5 @@ const CONFIG = {
   },
 
   // Cuántos artículos pedir por sección
-  MAX_RESULTS: 6
+   MAX_RESULTS: 6
 };

@@ -95,6 +95,7 @@ async function fetchNews(sectionKey) {
       title: a.title,
       description: a.description,
       content: a.content || a.description,
+      url: a.url || "",
       image: a.image,
       source: a.source?.name || "Fuente",
       category: sectionKey,

@@ -46,7 +46,10 @@
         <a href="#" class="live-link">LINK DIRECTO</a>
       </div>
       <div class="hero-stage" id="hero-stage">
+        <img id="hero-image" alt="">
         <div class="hero-caption" id="hero-caption"></div>
+        <button type="button" class="hero-arrow hero-arrow-prev" id="hero-prev" aria-label="Noticia anterior">&#8592;</button>
+        <button type="button" class="hero-arrow hero-arrow-next" id="hero-next" aria-label="Noticia siguiente">&#8594;</button>
       </div>
     </div>
   </section>
@@ -58,7 +61,13 @@
         <a href="#" class="see-all">Ver más</a>
       </div>
       <div class="status-msg" id="analisis-status">Cargando noticias…</div>
-      <div class="card-grid" id="analisis-grid"></div>
+      <div class="analysis-carousel">
+        <button type="button" class="analysis-arrow analysis-arrow-prev" id="analysis-prev" aria-label="Noticia anterior">&#8592;</button>
+        <div class="analysis-carousel-viewport">
+          <div class="card-grid" id="analisis-grid"></div>
+        </div>
+        <button type="button" class="analysis-arrow analysis-arrow-next" id="analysis-next" aria-label="Noticia siguiente">&#8594;</button>
+      </div>
     </div>
   </section>
 
@@ -69,9 +78,12 @@
         <a href="#" class="see-all">Ver más</a>
       </div>
       <div class="status-msg" id="bono-status">Cargando noticias…</div>
-      <div class="split">
-        <div id="bono-list"></div>
-        <div class="feature-media" id="bono-feature"></div>
+      <div class="analysis-carousel bono-carousel">
+        <button type="button" class="analysis-arrow analysis-arrow-prev" id="bono-prev" aria-label="Noticia anterior">&#8592;</button>
+        <div class="analysis-carousel-viewport">
+          <div class="card-grid" id="bono-grid"></div>
+        </div>
+        <button type="button" class="analysis-arrow analysis-arrow-next" id="bono-next" aria-label="Noticia siguiente">&#8594;</button>
       </div>
     </div>
   </section>
