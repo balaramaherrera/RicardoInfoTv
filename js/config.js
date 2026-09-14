@@ -17,7 +17,7 @@ const CONFIG = {
 
   // Idioma y país de las noticias
   LANG: "es",
-  COUNTRY: "ve",
+  COUNTRY: "VE",
 
   // Términos de búsqueda por sección de tu sitio
   SECTIONS: {
@@ -28,7 +28,12 @@ const CONFIG = {
     internacional:  "internacional OR conflictos internacionales OR geopolítica global",
     economia:       "economía mundial OR mercados internacionales OR política económica",
     sociedad:       "sociedad OR cultura social OR educación y salud",
-    tecnologia:     "tecnología OR inteligencia artificial OR innovación"
+   tecnologia:     "tecnología OR inteligencia artificial OR innovación",
+   venezuela:      "Venezuela OR política venezolana OR actualidad nacional",
+   politica:       "política venezolana OR gobierno Venezuela OR Asamblea Nacional",
+   energia:         "petróleo Venezuela OR energía OR acuerdos energéticos",
+   cultura:         "cultura venezolana OR arte OR patrimonio cultural",
+   opinion:         "opinión política OR análisis Venezuela OR editorial"
   },
 
    // Cuántos artículos pedir por sección

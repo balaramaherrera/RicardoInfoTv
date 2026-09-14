@@ -323,6 +323,11 @@ a { color: inherit; text-decoration: none; }
 .tecnologia-highlight {
   background: #dfeeff;
 }
+.venezuela-highlight { background: #f8d8c4; }
+.politica-highlight { background: #e6def8; }
+.energia-highlight { background: #f7e3b0; }
+.cultura-highlight { background: #d7f0e5; }
+.opinion-highlight { background: #e6e6e6; }
 .section-highlight h2 {
   border-left-color: transparent;
   padding-left: 0;

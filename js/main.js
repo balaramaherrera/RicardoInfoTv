@@ -28,7 +28,10 @@ async function loadAnalisis() {
   const previous = document.getElementById("analysis-prev");
   const next = document.getElementById("analysis-next");
   try {
-    const items = await fetchNews("analisis");
+    const manualItems = window.ANALYSIS_CARDS?.enabled
+      ? window.ANALYSIS_CARDS.items
+      : [];
+    const items = manualItems.length ? manualItems : await fetchNews("analisis");
     cacheArticles(items);
     status.textContent = "";
     grid.innerHTML = items.map(renderCard).join("");
