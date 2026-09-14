@@ -123,3 +123,7 @@ function getCachedArticle(id) {
   const existing = JSON.parse(sessionStorage.getItem("articleCache") || "{}");
   return existing[id] || null;
 }
+
+function getCachedArticles() {
+  return Object.values(JSON.parse(sessionStorage.getItem("articleCache") || "{}"));
+}

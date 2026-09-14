@@ -9,11 +9,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   let article = id ? getCachedArticle(id) : null;
 
   // Si alguien entra directo al link sin pasar por el home, no hay caché:
-  // cargamos noticias y tomamos la primera como respaldo.
+  // cargamos portada y tomamos la primera como respaldo.
   if (!article) {
-    const fallback = await fetchAllNews();
+    const fallback = await fetchNews("portada");
     cacheArticles(fallback);
-    article = fallback[2];
+    article = fallback[0];
   }
 
   if (!article) {
@@ -70,8 +70,26 @@ function renderArticle(a) {
 async function loadRelated(current) {
   const grid = document.getElementById("related-grid");
   try {
-    const items = await fetchAllNews();
-    const others = items.filter(i => i.id !== current.id).slice(0, 3);
+    let items = getCachedArticles();
+    let others = items
+      .filter(i => i.id !== current.id && i.category === current.category)
+      .slice(0, 3);
+
+    if (others.length < 3) {
+      const fresh = await fetchNews(current.category || "portada");
+      cacheArticles(fresh);
+      items = getCachedArticles();
+      others = items
+        .filter(i => i.id !== current.id && i.category === current.category)
+        .slice(0, 3);
+    }
+
+    if (others.length < 3) {
+      others = items
+        .filter(i => i.id !== current.id && !others.some(related => related.id === i.id))
+        .slice(0, 3);
+    }
+
     grid.innerHTML = others.map(renderCard).join("");
     attachCardHandlers(grid);
   } catch (e) {
