@@ -10,10 +10,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // Una petición a la vez, con una pequeña pausa entre cada una,
-  // para no disparar el límite de peticiones por segundo de la API.
-  await loadHero();
-  await sleep(600);
   await loadAnalisis();
   await sleep(600);
   await loadBonoBanca();
@@ -23,57 +19,8 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-let heroItems = [];
-let heroIndex = 0;
-let heroTimer = null;
 let analysisIndex = 0;
 let analysisTimer = null;
-
-async function loadHero() {
-  const stage = document.getElementById("hero-stage");
-  const image = document.getElementById("hero-image");
-  const caption = document.getElementById("hero-caption");
-  const previous = document.getElementById("hero-prev");
-  const next = document.getElementById("hero-next");
-  try {
-    const items = await fetchNews("portada");
-    if (!items.length || !stage || !image || !caption) return;
-    cacheArticles(items);
-    heroItems = [...items].sort(() => Math.random() - 0.5);
-
-    const renderHeroItem = () => {
-      const top = heroItems[heroIndex];
-      image.src = top.image || "";
-      image.alt = top.title || "Noticia destacada";
-      caption.innerHTML = `
-      <div class="eyebrow">Última hora</div>
-      <h1>${escapeHtml(top.title)}</h1>
-    `;
-      caption.onclick = () => goToArticle(top.id);
-      caption.style.cursor = "pointer";
-    };
-
-    const showNext = (direction) => {
-      heroIndex = (heroIndex + direction + heroItems.length) % heroItems.length;
-      renderHeroItem();
-      restartHeroTimer();
-    };
-
-    const restartHeroTimer = () => {
-      window.clearInterval(heroTimer);
-      if (heroItems.length > 1) heroTimer = window.setInterval(() => showNext(1), 7000);
-    };
-
-    previous.disabled = heroItems.length < 2;
-    next.disabled = heroItems.length < 2;
-    previous.onclick = () => showNext(-1);
-    next.onclick = () => showNext(1);
-    renderHeroItem();
-    restartHeroTimer();
-  } catch (e) {
-    console.error(e);
-  }
-}
 
 async function loadAnalisis() {
   const grid = document.getElementById("analisis-grid");

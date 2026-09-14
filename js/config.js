@@ -31,6 +31,6 @@ const CONFIG = {
     tecnologia:     "tecnología OR inteligencia artificial OR innovación"
   },
 
-  // Cuántos artículos pedir por sección
+   // Cuántos artículos pedir por sección
    MAX_RESULTS: 6
 };

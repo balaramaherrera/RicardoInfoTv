@@ -7,7 +7,7 @@
 <title>RicardoInfoTv — Geopolítica y análisis internacional</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=3">
 </head>
 <body>
 
@@ -43,13 +43,16 @@
     <div class="wrap">
       <div class="hero-top">
         <span class="live-tag"><span class="live-dot"></span> EN VIVO AHORA</span>
-        <a href="#" class="live-link">LINK DIRECTO</a>
+        <a href="https://www.youtube.com/watch?v=fnrSBHmH3XA" class="live-link" target="_blank" rel="noopener noreferrer">LINK DIRECTO</a>
       </div>
       <div class="hero-stage" id="hero-stage">
-        <img id="hero-image" alt="">
-        <div class="hero-caption" id="hero-caption"></div>
-        <button type="button" class="hero-arrow hero-arrow-prev" id="hero-prev" aria-label="Noticia anterior">&#8592;</button>
-        <button type="button" class="hero-arrow hero-arrow-next" id="hero-next" aria-label="Noticia siguiente">&#8594;</button>
+        <iframe
+          class="hero-video"
+          src="https://www.youtube.com/embed/fnrSBHmH3XA?rel=0&modestbranding=1"
+          title="SIN FILTRO PODCAST CON RICARDO GONZALEZ"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
       </div>
     </div>
   </section>
@@ -95,9 +98,9 @@
     </div>
   </footer>
 
-  <script src="js/config.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/shared.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/config.js?v=3"></script>
+  <script src="js/api.js?v=3"></script>
+  <script src="js/shared.js?v=3"></script>
+  <script src="js/main.js?v=3"></script>
 </body>
 </html>
