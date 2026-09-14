@@ -6,7 +6,37 @@
 window.addEventListener("DOMContentLoaded", () => {
   requestAnimationFrame(() => document.body.classList.add("is-ready"));
   setupCompactHeader();
+  setupMoreSections();
 });
+
+function setupMoreSections() {
+  const wrap = document.querySelector(".more-sections-wrap");
+  if (!wrap) return;
+
+  const button = wrap.querySelector(".more-sections");
+  const menu = wrap.querySelector(".more-sections-menu");
+  if (!button || !menu) return;
+
+  const closeMenu = () => {
+    wrap.classList.remove("is-open");
+    button.setAttribute("aria-expanded", "false");
+  };
+
+  button.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const willOpen = !wrap.classList.contains("is-open");
+    wrap.classList.toggle("is-open", willOpen);
+    button.setAttribute("aria-expanded", String(willOpen));
+  });
+
+  menu.querySelectorAll("a").forEach(link => {
+    link.addEventListener("click", () => closeMenu());
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!wrap.contains(event.target)) closeMenu();
+  });
+}
 
 function setupCompactHeader() {
   const header = document.querySelector(".site-header");

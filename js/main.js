@@ -3,6 +3,13 @@
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", async () => {
+  const section = document.body.dataset.section;
+
+  if (section) {
+    await loadSectionPage(section);
+    return;
+  }
+
   // Una petición a la vez, con una pequeña pausa entre cada una,
   // para no disparar el límite de peticiones por segundo de la API.
   await loadHero();
@@ -73,6 +80,25 @@ async function loadBonoBanca() {
   } catch (e) {
     status.textContent = "No se pudieron cargar las noticias de esta sección.";
     status.classList.add("error");
+  }
+}
+
+async function loadSectionPage(sectionKey) {
+  const grid = document.getElementById(`${sectionKey}-grid`);
+  if (!grid) return;
+
+  const status = document.getElementById(`${sectionKey}-status`);
+  try {
+    const items = await fetchNews(sectionKey);
+    cacheArticles(items);
+    if (status) status.textContent = "";
+    grid.innerHTML = items.map(renderCard).join("");
+    attachCardHandlers(grid);
+  } catch (e) {
+    if (status) {
+      status.textContent = "No se pudieron cargar las noticias de esta sección.";
+      status.classList.add("error");
+    }
   }
 }
 

@@ -40,7 +40,7 @@ function setupReadProgress() {
 }
 
 function renderArticle(a) {
-  document.title = `${a.title} — Riesdorinfoty`;
+  document.title = `${a.title} — RicardoInfoTv`;
 
   document.getElementById("art-eyebrow").textContent = sectionLabel(a.category);
   document.getElementById("art-title").textContent = a.title;
