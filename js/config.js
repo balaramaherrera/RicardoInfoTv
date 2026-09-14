@@ -10,7 +10,7 @@
 
 const CONFIG = {
   // Pega tu API key de GNews.io aquí (deja vacío para usar datos de ejemplo)
-  GNEWS_API_KEY: "bda2bf9f935f4d45c571710940f819b6",
+  GNEWS_API_KEY: "",
 
   // Endpoint base de GNews
   GNEWS_BASE_URL: "https://gnews.io/api/v4/search",
