@@ -13,10 +13,39 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadAnalisis();
   await sleep(600);
   await loadBonoBanca();
+  setupSearch();
 });
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function setupSearch() {
+  const form = document.getElementById("search-form");
+  const input = document.getElementById("search-input");
+  const status = document.getElementById("search-status");
+  const results = document.getElementById("search-results");
+  if (!form || !input || !status || !results) return;
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const query = input.value.trim();
+    if (query.length < 2) return;
+    status.textContent = "Buscando noticias...";
+    status.classList.remove("error");
+    results.innerHTML = "";
+    try {
+      const items = await fetchNewsQuery(query);
+      if (!items.length) throw new Error("Sin resultados");
+      cacheArticles(items);
+      results.innerHTML = items.map(renderCard).join("");
+      attachCardHandlers(results);
+      status.textContent = `${items.length} resultados para “${query}”`;
+    } catch (error) {
+      status.textContent = "No encontramos noticias. Prueba con otra búsqueda.";
+      status.classList.add("error");
+    }
+  });
 }
 
 async function loadAnalisis() {

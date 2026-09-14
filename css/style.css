@@ -45,6 +45,7 @@ body.is-leaving { opacity: 0; }
 img { max-width: 100%; display: block; }
 
 a { color: inherit; text-decoration: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
 .wrap {
   max-width: var(--maxw);
@@ -289,6 +290,13 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- Section shell ---------- */
 .section { padding: 48px 0 56px; }
+.search-section { background: #fff; border-top: 1px solid var(--rule); }
+.search-form { display: flex; max-width: 720px; gap: 10px; }
+.search-form input { flex: 1; min-width: 0; padding: 12px 14px; border: 1px solid var(--rule); border-radius: 3px; background: var(--cream); color: var(--ink); font: inherit; }
+.search-form input:focus { outline: 2px solid rgba(179,18,42,.28); border-color: var(--accent); }
+.search-form button { padding: 0 18px; border: 0; border-radius: 3px; background: var(--accent); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.search-form button:hover { background: var(--accent-dark); }
+.search-results { margin-top: 22px; }
 .section + .section { border-top: 1px solid var(--rule); }
 .section-head {
   display: flex;
@@ -619,6 +627,8 @@ a { color: inherit; text-decoration: none; }
   .section-description-box { padding: 14px 15px; }
   .section-description-box p { text-align: left; }
   .card-grid { grid-template-columns: 1fr; }
+  .search-form { flex-direction: column; }
+  .search-form button { min-height: 42px; }
   .analysis-carousel { padding: 0 40px; }
   .analysis-carousel .card { flex-basis: 250px; }
   .card-media { aspect-ratio: 16/10; }

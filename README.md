@@ -6,15 +6,19 @@ No necesita Node.js: se abre directamente en el navegador o con Live Server.
 ## Estructura
 ```
 noticias-geo/
-├── index.html        → Página de inicio (hero + secciones)
+├── index.html         → Página de inicio, video, buscador y secciones
 ├── articulo.html      → Plantilla de artículo individual
+├── robots.txt         → Instrucciones para buscadores
+├── sitemap.xml        → Mapa de páginas públicas
+├── favicon.svg        → Icono del sitio
 ├── css/style.css      → Todos los estilos
 └── js/
     ├── config.js       → Aquí pegas tu API key
     ├── api.js          → Conexión a la API + datos de ejemplo
     ├── shared.js        → Funciones compartidas (tarjetas, navegación)
     ├── main.js          → Lógica de la página de inicio
-    └── article.js       → Lógica de la página de artículo
+   ├── article.js       → Lógica de la página de artículo
+   └── analysis-cards.js → Tarjetas manuales de Análisis y opinión
 ```
 
 ## Cómo probarlo ya mismo
@@ -45,9 +49,17 @@ Sube la carpeta a GitHub y conéctala a **Netlify** o **Vercel** (ambos
 gratis) — al ser un sitio 100% estático, el despliegue es automático,
 sin configuración adicional.
 
-## Siguientes pasos sugeridos
-- Ajustar los términos de búsqueda de `config.js` para afinar qué
-  noticias aparecen en cada sección.
-- Reemplazar el logo de texto por tu logo real (agrégalo en `assets/`).
-- Si más adelante quieres más de 3 categorías o paginación, se puede
-  extender fácilmente el mismo patrón de `fetchNews()`.
+## Funciones actuales
+- Noticias reales por sección mediante GNews, con contenido alternativo local.
+- Buscador global en la portada.
+- Carruseles independientes para Análisis y opinión y Bono y banca.
+- Reproductor fijo de YouTube para RicardoInfoTv.
+- Páginas dedicadas para Venezuela, Política, Energía, Cultura y Opinión.
+- Páginas de Contacto, Quiénes somos y Aviso legal.
+- `robots.txt`, `sitemap.xml` y metadatos para compartir en redes.
+
+## Pendiente de producción
+La clave de GNews está en el navegador porque este proyecto es estático. Para
+protegerla en producción, mueve `fetchNews()` y `fetchNewsQuery()` a una función
+serverless o backend y guarda la clave en una variable de entorno. No publiques
+una clave real en un repositorio público si el proveedor permite revocarla.

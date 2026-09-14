@@ -74,6 +74,10 @@ const MOCK_ARTICLES = [
  */
 async function fetchNews(sectionKey) {
   const query = CONFIG.SECTIONS[sectionKey] || CONFIG.SECTIONS.portada;
+  return fetchNewsQuery(query, sectionKey);
+}
+
+async function fetchNewsQuery(query, sectionKey = "busqueda") {
 
   if (!CONFIG.GNEWS_API_KEY) {
     return mockBySection(sectionKey);
@@ -91,7 +95,7 @@ async function fetchNews(sectionKey) {
     if (!data.articles || !data.articles.length) throw new Error("Sin artículos");
 
     return data.articles.map((a, i) => ({
-      id: `api-${sectionKey}-${i}`,
+      id: `api-${sectionKey}-${Date.now()}-${i}`,
       title: a.title,
       description: a.description,
       content: a.content || a.description,

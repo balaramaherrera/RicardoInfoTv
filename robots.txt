@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://balaramaherrera.github.io/RicardoInfoTv/sitemap.xml
