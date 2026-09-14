@@ -19,9 +19,6 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-let analysisIndex = 0;
-let analysisTimer = null;
-
 async function loadAnalisis() {
   const grid = document.getElementById("analisis-grid");
   const status = document.getElementById("analisis-status");
@@ -32,19 +29,20 @@ async function loadAnalisis() {
       ? window.ANALYSIS_CARDS.items
       : [];
     const items = manualItems.length ? manualItems : await fetchNews("analisis");
+    if (!items.length) throw new Error("Sin noticias de análisis");
     cacheArticles(items);
     status.textContent = "";
     grid.innerHTML = items.map(renderCard).join("");
     attachCardHandlers(grid);
     setupCardCarousel(items, grid, previous, next);
   } catch (e) {
-    status.textContent = "No se pudieron cargar las noticias de esta sección.";
-    status.classList.add("error");
+    showSectionError(status, () => loadAnalisis());
   }
 }
 
 function setupCardCarousel(items, grid, previous, next) {
-  analysisIndex = 0;
+  let index = 0;
+  let timer = null;
   const viewport = grid.parentElement;
   const getMaxIndex = () => {
     const firstCard = grid.firstElementChild;
@@ -58,20 +56,20 @@ function setupCardCarousel(items, grid, previous, next) {
     if (!firstCard) return;
     const gap = 16;
     const step = firstCard.getBoundingClientRect().width + gap;
-    analysisIndex = Math.min(analysisIndex, getMaxIndex());
-    grid.style.transform = `translateX(-${analysisIndex * step}px)`;
+    index = Math.min(index, getMaxIndex());
+    grid.style.transform = `translateX(-${index * step}px)`;
   };
   const move = (direction) => {
     const maxIndex = getMaxIndex();
-    analysisIndex += direction;
-    if (analysisIndex > maxIndex) analysisIndex = 0;
-    if (analysisIndex < 0) analysisIndex = maxIndex;
+    index += direction;
+    if (index > maxIndex) index = 0;
+    if (index < 0) index = maxIndex;
     update();
-    restartAnalysisTimer();
+    restartTimer();
   };
-  const restartAnalysisTimer = () => {
-    window.clearInterval(analysisTimer);
-    if (items.length > 1) analysisTimer = window.setInterval(() => move(1), 6500);
+  const restartTimer = () => {
+    window.clearInterval(timer);
+    if (items.length > 1) timer = window.setInterval(() => move(1), 6500);
   };
 
   previous.disabled = items.length < 2;
@@ -80,7 +78,7 @@ function setupCardCarousel(items, grid, previous, next) {
   next.onclick = () => move(1);
   window.addEventListener("resize", update);
   update();
-  restartAnalysisTimer();
+  restartTimer();
 }
 
 async function loadBonoBanca() {
@@ -90,14 +88,14 @@ async function loadBonoBanca() {
   const next = document.getElementById("bono-next");
   try {
     const items = await fetchNews("bono_banca");
+    if (!items.length) throw new Error("Sin noticias de banca");
     cacheArticles(items);
     status.textContent = "";
     grid.innerHTML = items.map(renderCard).join("");
     attachCardHandlers(grid);
     setupCardCarousel(items, grid, previous, next);
   } catch (e) {
-    status.textContent = "No se pudieron cargar las noticias de esta sección.";
-    status.classList.add("error");
+    showSectionError(status, () => loadBonoBanca());
   }
 }
 
@@ -108,16 +106,22 @@ async function loadSectionPage(sectionKey) {
   const status = document.getElementById(`${sectionKey}-status`);
   try {
     const items = await fetchNews(sectionKey);
+    if (!items.length) throw new Error(`Sin noticias para ${sectionKey}`);
     cacheArticles(items);
     if (status) status.textContent = "";
     grid.innerHTML = items.map(renderCard).join("");
     attachCardHandlers(grid);
   } catch (e) {
-    if (status) {
-      status.textContent = "No se pudieron cargar las noticias de esta sección.";
-      status.classList.add("error");
-    }
+    if (status) showSectionError(status, () => loadSectionPage(sectionKey));
   }
+}
+
+function showSectionError(status, retry) {
+  if (!status) return;
+  status.classList.add("error");
+  status.innerHTML = "No hay noticias disponibles en este momento. " +
+    '<button type="button" class="retry-button">Reintentar</button>';
+  status.querySelector(".retry-button").addEventListener("click", retry, { once: true });
 }
 
 function renderListItem(item) {

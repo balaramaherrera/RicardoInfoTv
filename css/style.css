@@ -508,6 +508,23 @@ a { color: inherit; text-decoration: none; }
   padding: 10px 0;
 }
 .status-msg.error { color: var(--accent); }
+.retry-button {
+  margin-left: 8px;
+  padding: 5px 10px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.retry-button:hover,
+.retry-button:focus-visible {
+  background: var(--accent);
+  color: #fff;
+  outline: none;
+}
 
 /* ---------- Barra de progreso de lectura (solo articulo.html) ---------- */
 .read-progress {
