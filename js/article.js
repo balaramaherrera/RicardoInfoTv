@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!article) {
     const fallback = await fetchAllNews();
     cacheArticles(fallback);
-    article = fallback[0];
+    article = fallback[2];
   }
 
   if (!article) {
