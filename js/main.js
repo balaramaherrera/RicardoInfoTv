@@ -1,163 +1,112 @@
-/* =========================================================
-   Página de inicio — carga y pinta las secciones de noticias
-   ========================================================= */
+function addEditLink(card, id) {
+  const link = document.createElement("a");
+  link.className = "edit-card-link";
+  link.href = `editar.html?id=${encodeURIComponent(id)}`;
+  link.textContent = "Editar";
+  link.setAttribute("aria-label", `Editar ${card.title}`);
+  card.appendChild(link);
+}
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const section = document.body.dataset.section;
+function addReadMoreLink(element, id) {
+  const body = element.classList.contains("main-story")
+    ? element.querySelector(".main-story-overlay")
+    : element.querySelector("[class$='-body']");
+  if (!body || body.querySelector(".read-more-link")) return;
+  const link = document.createElement("a");
+  link.className = "read-more-link";
+  link.href = `articulo.html?id=${encodeURIComponent(id)}`;
+  link.textContent = "Leer noticia completa →";
+  body.appendChild(link);
+}
 
-  if (section) {
-    await loadSectionPage(section);
-    return;
+function fillCardElement(element, id, data) {
+  const title = element.querySelector("h1, h3");
+  const tag = element.querySelector(".tag");
+  const meta = element.querySelector(".meta");
+  if (title) {
+    title.textContent = "";
+    const titleLink = document.createElement("a");
+    titleLink.className = "card-title-link";
+    titleLink.href = `articulo.html?id=${encodeURIComponent(id)}`;
+    titleLink.textContent = data.title;
+    title.appendChild(titleLink);
   }
+  if (tag) tag.textContent = data.category;
+  if (meta) meta.textContent = [data.author, data.time].filter(Boolean).join(" · ");
+  if (element.classList.contains("main-story")) {
+    element.style.backgroundImage = `linear-gradient(0deg, rgba(0,0,0,.75) 20%, rgba(0,0,0,0) 65%), url("${data.image}")`;
+  } else {
+    const media = element.querySelector("[class$='-media']");
+    if (media) media.style.backgroundImage = `url("${data.image}")`;
+  }
+  addEditLink(element, id);
+  addReadMoreLink(element, id);
+}
 
-  await loadAnalisis();
-  await sleep(600);
-  await loadBonoBanca();
-  setupSearch();
+// Crea el marcado de una tarjeta de noticia nueva (creada por el usuario)
+// para agregarla a la grilla de "Últimas noticias" en portada.
+function buildNewsCardElement(id) {
+  const article = document.createElement("article");
+  article.className = "news-card";
+  article.dataset.cardId = id;
+  article.innerHTML = `
+    <div class="news-card-media"></div>
+    <div class="news-card-body">
+      <span class="tag"></span>
+      <h3></h3>
+    </div>`;
+  return article;
+}
+
+function renderCards() {
+  document.querySelectorAll("[data-card-id]").forEach((element) => {
+    const id = element.dataset.cardId;
+    const data = getCard(id);
+    if (!data) return;
+    fillCardElement(element, id, data);
+  });
+
+  const newsGrid = document.getElementById("news-grid");
+  if (newsGrid) {
+    getCustomCardIds().forEach((id) => {
+      if (newsGrid.querySelector(`[data-card-id="${id}"]`)) return;
+      const data = getCard(id);
+      if (!data) return;
+      const article = buildNewsCardElement(id);
+      newsGrid.appendChild(article);
+      fillCardElement(article, id, data);
+    });
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderCards();
+  updateAuthNavigation();
+  const toggle = document.getElementById("nav-toggle");
+  const nav = document.getElementById("main-nav");
+  if (!toggle || !nav) return;
+
+  toggle.addEventListener("click", () => {
+    const isOpen = nav.style.display === "flex";
+    nav.style.display = isOpen ? "none" : "flex";
+    nav.style.flexDirection = "column";
+    nav.style.position = "absolute";
+    nav.style.top = "60px";
+    nav.style.left = "0";
+    nav.style.right = "0";
+    nav.style.background = "#111216";
+    nav.style.padding = "16px 24px";
+    nav.style.gap = "14px";
+  });
 });
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+function updateAuthNavigation() {
+  const session = sessionStorage.getItem("ricardoinfotv-session");
+  const loginLink = document.querySelector('a[href="login.html"]');
+  const accountLink = document.querySelector('a[href="cuenta.html"]');
+  if (!loginLink || !accountLink) return;
 
-function setupSearch() {
-  const form = document.getElementById("search-form");
-  const input = document.getElementById("search-input");
-  const status = document.getElementById("search-status");
-  const results = document.getElementById("search-results");
-  if (!form || !input || !status || !results) return;
-
-  form.addEventListener("submit", async event => {
-    event.preventDefault();
-    const query = input.value.trim();
-    if (query.length < 2) return;
-    status.textContent = "Buscando noticias...";
-    status.classList.remove("error");
-    results.innerHTML = "";
-    try {
-      const items = await fetchNewsQuery(query);
-      if (!items.length) throw new Error("Sin resultados");
-      cacheArticles(items);
-      results.innerHTML = items.map(renderCard).join("");
-      attachCardHandlers(results);
-      status.textContent = `${items.length} resultados para “${query}”`;
-    } catch (error) {
-      status.textContent = "No encontramos noticias. Prueba con otra búsqueda.";
-      status.classList.add("error");
-    }
-  });
-}
-
-async function loadAnalisis() {
-  const grid = document.getElementById("analisis-grid");
-  const status = document.getElementById("analisis-status");
-  const previous = document.getElementById("analysis-prev");
-  const next = document.getElementById("analysis-next");
-  try {
-    const manualItems = window.ANALYSIS_CARDS?.enabled
-      ? window.ANALYSIS_CARDS.items
-      : [];
-    const items = manualItems.length ? manualItems : await fetchNews("analisis");
-    if (!items.length) throw new Error("Sin noticias de análisis");
-    cacheArticles(items);
-    status.textContent = "";
-    grid.innerHTML = items.map(renderCard).join("");
-    attachCardHandlers(grid);
-    setupCardCarousel(items, grid, previous, next);
-  } catch (e) {
-    showSectionError(status, () => loadAnalisis());
-  }
-}
-
-function setupCardCarousel(items, grid, previous, next) {
-  let index = 0;
-  let timer = null;
-  const viewport = grid.parentElement;
-  const getMaxIndex = () => {
-    const firstCard = grid.firstElementChild;
-    if (!firstCard) return 0;
-    const step = firstCard.getBoundingClientRect().width + 16;
-    const visibleCards = Math.max(1, Math.floor((viewport.clientWidth + 16) / step));
-    return Math.max(0, items.length - visibleCards);
-  };
-  const update = () => {
-    const firstCard = grid.firstElementChild;
-    if (!firstCard) return;
-    const gap = 16;
-    const step = firstCard.getBoundingClientRect().width + gap;
-    index = Math.min(index, getMaxIndex());
-    grid.style.transform = `translateX(-${index * step}px)`;
-  };
-  const move = (direction) => {
-    const maxIndex = getMaxIndex();
-    index += direction;
-    if (index > maxIndex) index = 0;
-    if (index < 0) index = maxIndex;
-    update();
-    restartTimer();
-  };
-  const restartTimer = () => {
-    window.clearInterval(timer);
-    if (items.length > 1) timer = window.setInterval(() => move(1), 6500);
-  };
-
-  previous.disabled = items.length < 2;
-  next.disabled = items.length < 2;
-  previous.onclick = () => move(-1);
-  next.onclick = () => move(1);
-  window.addEventListener("resize", update);
-  update();
-  restartTimer();
-}
-
-async function loadBonoBanca() {
-  const grid = document.getElementById("bono-grid");
-  const status = document.getElementById("bono-status");
-  const previous = document.getElementById("bono-prev");
-  const next = document.getElementById("bono-next");
-  try {
-    const items = await fetchNews("bono_banca");
-    if (!items.length) throw new Error("Sin noticias de banca");
-    cacheArticles(items);
-    status.textContent = "";
-    grid.innerHTML = items.map(renderCard).join("");
-    attachCardHandlers(grid);
-    setupCardCarousel(items, grid, previous, next);
-  } catch (e) {
-    showSectionError(status, () => loadBonoBanca());
-  }
-}
-
-async function loadSectionPage(sectionKey) {
-  const grid = document.getElementById(`${sectionKey}-grid`);
-  if (!grid) return;
-
-  const status = document.getElementById(`${sectionKey}-status`);
-  try {
-    const items = await fetchNews(sectionKey);
-    if (!items.length) throw new Error(`Sin noticias para ${sectionKey}`);
-    cacheArticles(items);
-    if (status) status.textContent = "";
-    grid.innerHTML = items.map(renderCard).join("");
-    attachCardHandlers(grid);
-  } catch (e) {
-    if (status) showSectionError(status, () => loadSectionPage(sectionKey));
-  }
-}
-
-function showSectionError(status, retry) {
-  if (!status) return;
-  status.classList.add("error");
-  status.innerHTML = "No hay noticias disponibles en este momento. " +
-    '<button type="button" class="retry-button">Reintentar</button>';
-  status.querySelector(".retry-button").addEventListener("click", retry, { once: true });
-}
-
-function renderListItem(item) {
-  return `
-    <div class="list-item" data-id="${item.id}" style="cursor:pointer">
-      <h3>${escapeHtml(item.title)}</h3>
-      <p>${escapeHtml(item.description || "")}</p>
-    </div>
-  `;
+  const isLoggedIn = Boolean(session);
+  loginLink.hidden = isLoggedIn;
+  accountLink.hidden = !isLoggedIn;
 }
